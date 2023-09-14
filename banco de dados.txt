@@ -1,0 +1,90 @@
+
+
+CREATE TABLE public.cliente
+(
+    id_cliente uuid NOT NULL,
+    nomecompleto character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    cpf character varying(14) COLLATE pg_catalog."default" NOT NULL,
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    senha character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    datanascimento date NOT NULL,
+    CONSTRAINT cliente_pkey PRIMARY KEY (id_cliente),
+    CONSTRAINT cliente_cpf_key UNIQUE (cpf)
+,
+    CONSTRAINT cliente_email_key UNIQUE (email)
+
+)
+
+
+CREATE TABLE public.endereco
+(
+    id_endereco uuid NOT NULL,
+    logradouro character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    numero numeric(5,0) NOT NULL,
+    cidade character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    estado character varying(2) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT endereco_pkey PRIMARY KEY (id_endereco)
+)
+
+
+
+CREATE TABLE public.orcamento
+(
+    id_orcamento uuid NOT NULL,
+    chamado_id uuid,
+    estado estadochamado NOT NULL,
+    data_alteracao_estado date,
+    CONSTRAINT orcamento_pkey PRIMARY KEY (id_orcamento),
+    CONSTRAINT orcamento_chamado_id_fkey FOREIGN KEY (chamado_id)
+        REFERENCES public.chamado (id_chamado) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+
+
+
+CREATE TABLE public.pedidomanutencao
+(
+    id_manutencao uuid NOT NULL,
+    descricao character varying(150) COLLATE pg_catalog."default",
+    status estadochamado NOT NULL,
+    chamado_id uuid,
+    CONSTRAINT pedidomanutencao_pkey PRIMARY KEY (id_manutencao),
+    CONSTRAINT pedidomanutencao_chamado_id_fkey FOREIGN KEY (chamado_id)
+        REFERENCES public.chamado (id_chamado) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+
+
+
+CREATE TABLE public.sac
+(
+    id_sac uuid NOT NULL,
+    status tipoestadosac NOT NULL,
+    chamado_id uuid,
+    CONSTRAINT sac_pkey PRIMARY KEY (id_sac),
+    CONSTRAINT sac_chamado_id_fkey FOREIGN KEY (chamado_id)
+        REFERENCES public.chamado (id_chamado) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+CREATE TYPE TipoChamado AS ENUM ('Orçamento', 'PedidoManutencao', 'SAC_CS');
+CREATE TYPE EstadoChamado AS ENUM ('Aberto', 'Enviado', 'Fechado', 'Recusado');
+
+
+
+
+INSERT INTO cliente (id_cliente, nomecompleto, datanascimento, cpf, email, senha) 
+VALUES 
+    ('1a5e72c5-7f2b-4e32-9e46-3515bfe1ef01', 'João da Silva', '1990-05-15', '12345678901', 'joao@email.com', 'senha123'),
+    ('2b6d92a7-5c8f-4a43-83d6-859f71e4b5e2', 'Maria Pereira', '1985-02-20', '98765432101', 'maria@email.com', 'senhamaria'),
+    ('3c8e34b9-3f4d-4c67-8a7a-2409bde2c2d3', 'Pedro Souza', '1995-09-10', '45678901234', 'pedro@email.com', 'senhapedro'),
+    ('4d9f81c2-1e7a-4b65-93dc-76ce5a89d4f4', 'Ana Santos', '1980-12-03', '78901234567', 'ana@email.com', 'senhaana'),
+    ('5e0a6d4f-3b2c-4e19-8e64-7253c89f71e5', 'Lucas Oliveira', '2000-07-25', '01234567890', 'lucas@email.com', 'senha1234');
